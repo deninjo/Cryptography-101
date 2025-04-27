@@ -21,23 +21,27 @@ target_ciphertext = "32510ba9babebbbefd001547a810e67149caee11d945cd7fc81a05e9f85
 ciphertexts = [bytes.fromhex(ct) for ct in ciphertexts]
 target_ciphertext = bytes.fromhex(target_ciphertext)
 
+
 # XOR two byte strings
 def strxor(a, b):
     return bytes([x ^ y for x, y in zip(a, b)])
 
-# Recover the key by analyzing XORed ciphertexts
-def recover_key(ciphertexts, target_ciphertext):
-    key = bytearray(len(target_ciphertext))
-    for i in range(len(ciphertexts)):
-        xor_result = strxor(ciphertexts[i], target_ciphertext)
-        for j in range(len(xor_result)):
-            if 65 <= xor_result[j] <= 90 or 97 <= xor_result[j] <= 122:  # ASCII letters
-                key[j] = xor_result[j] ^ 32  # Flip case (space ^ letter = flipped letter)
-    return key
 
-# Recover the key
-key = recover_key(ciphertexts, target_ciphertext)
+# Attempt to recover plaintext by XORing ciphertexts
+def guess_plaintext(ciphertexts, target_ciphertext):
+    plaintext_guess = ["_"] * len(target_ciphertext)
 
-# Decrypt the target ciphertext
-plaintext = strxor(target_ciphertext, key)
-print("Decrypted plaintext:", plaintext.decode('utf-8', errors='ignore'))
+    for ct in ciphertexts:
+        xor_result = strxor(ct, target_ciphertext)
+        for i, byte in enumerate(xor_result):
+            # If result looks like a letter, assume one of the two plaintexts had a space at that position
+            if 65 <= byte <= 90 or 97 <= byte <= 122:  # ASCII uppercase or lowercase letters
+                if plaintext_guess[i] == "_":
+                    plaintext_guess[i] = chr(byte)
+
+    return "".join(plaintext_guess)
+
+
+# Guess and print the plaintext
+plaintext = guess_plaintext(ciphertexts, target_ciphertext)
+print("Guessed plaintext:", plaintext)
