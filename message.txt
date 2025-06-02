@@ -1,0 +1,4 @@
+Decrypted plaintext: tHECSECUETTMESSAGENISXEwHTNTUSINGQAASTREAMOCIPHERICNEVERAUSELTHEFKEYOMOREETHANBONCT
+
+After manually refining the decryted plaintext (this is where human insight helps), we get the meassage as:
+"THE SECRET MESSAGE IS, WHEN USING A STREAM CIPHER NEVER USE THE KEY MORE THAN ONCE"
